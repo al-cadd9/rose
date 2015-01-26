@@ -566,13 +566,13 @@ class Jetpack_Subscriptions_Widget extends WP_Widget {
 		if ( ( ! defined( 'IS_WPCOM' ) || ! IS_WPCOM )
 		    && false === apply_filters( 'jetpack_auto_fill_logged_in_user', false )
 		) {
-			$subscribe_email = esc_html__( 'Email Address', 'jetpack' );
+			$subscribe_email = esc_html__( '', 'jetpack' );
 		} else {
 			global $current_user;
 			if ( ! empty( $current_user->user_email ) ) {
 				$subscribe_email = esc_attr( $current_user->user_email );
 			} else {
-				$subscribe_email = esc_html__( 'Email Address', 'jetpack' );
+				$subscribe_email = esc_html__( '', 'jetpack' );
 			}
 		}
 
@@ -601,36 +601,9 @@ class Jetpack_Subscriptions_Widget extends WP_Widget {
 		echo $args['before_widget'];
 		echo $args['before_title'] . '<label for="' . esc_attr( $subscribe_field_id ) . '">' . esc_attr( $instance['title'] ) . '</label>' . $args['after_title'] . "\n";
 
-		$referer = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
-
-		// Check for subscription confirmation.
-		if ( isset( $_GET['subscribe'] ) && 'success' == $_GET['subscribe'] ) : ?>
-
-			<div class="success">
-				<p><?php esc_html_e( 'An email was just sent to confirm your subscription. Please find the email now and click activate to start subscribing.', 'jetpack' ); ?></p>
-			</div>
-
-		<?php endif;
-
-		// Display any errors
-		if ( isset( $_GET['subscribe'] ) ) :
-			switch ( $_GET['subscribe'] ) :
-				case 'invalid_email' : ?>
-					<p class="error"><?php esc_html_e( 'The email you entered was invalid. Please check and try again.', 'jetpack' ); ?></p>
-				<?php break;
-				case 'already' : ?>
-					<p class="error"><?php esc_html_e( 'You have already subscribed to this site. Please check your inbox.', 'jetpack' ); ?></p>
-				<?php break;
-				case 'success' :
-					echo wpautop( $subscribe_text );
-					break;
-				default : ?>
-					<p class="error"><?php esc_html_e( 'There was an error when subscribing. Please try again.', 'jetpack' ) ?></p>
-				<?php break;
-			endswitch;
-		endif;
-
-		// Display a subscribe form ?>
+		$referer = set_url_scheme( 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] ); ?>
+		
+		
 		<form action="#" method="post" accept-charset="utf-8" id="subscribe-blog-<?php echo $widget_id; ?>">
 			<?php
 			if ( ! isset ( $_GET['subscribe'] ) ) {
@@ -659,7 +632,8 @@ class Jetpack_Subscriptions_Widget extends WP_Widget {
 						wp_nonce_field( 'blogsub_subscribe_'. get_current_blog_id(), '_wpnonce', false );
 					}
 				?>
-				<input type="submit" value="<?php echo esc_attr( $subscribe_button ); ?>" name="jetpack_subscriptions_widget" />
+				<input type="submit" value="<?php echo esc_attr( $subscribe_button ); ?>" name="jetpack_subscriptions_widget" /><br /><br />
+				<span id="submit-msg">enter your email,<br />then hit "submit"</span>
 			</p>
 		</form>
 
@@ -675,6 +649,39 @@ class Jetpack_Subscriptions_Widget extends WP_Widget {
 				}
 			} ) ( document );
 		</script>
+		
+		
+		
+		<?php
+		// Check for subscription confirmation.
+		if ( isset( $_GET['subscribe'] ) && 'success' == $_GET['subscribe'] ) : ?>
+
+			<div class="success">
+				<p><?php esc_html_e( 'An email was just sent to confirm your subscription. Please find the email now and click activate to start subscribing.', 'jetpack' ); ?></p>
+			</div>
+
+		<?php endif;
+
+		// Display any errors
+		if ( isset( $_GET['subscribe'] ) ) :
+			switch ( $_GET['subscribe'] ) :
+				case 'invalid_email' : ?>
+					<p class="error"><?php esc_html_e( 'The email you entered was invalid. Please check and try again.', 'jetpack' ); ?></p>
+				<?php break;
+				case 'already' : ?>
+					<p class="error"><?php esc_html_e( 'You have already subscribed to this site. Please check your inbox.', 'jetpack' ); ?></p>
+				<?php break;
+				case 'success' :
+					echo wpautop( $subscribe_text );
+					break;
+				default : ?>
+					<p class="error"><?php esc_html_e( 'There was an error when subscribing. Please try again.', 'jetpack' ) ?></p>
+				<?php break;
+			endswitch;
+		endif;
+
+		// Display a subscribe form ?>
+		
 
 		<?php
 
